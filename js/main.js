@@ -1,4 +1,5 @@
-const text = `Погода бывает разной: от яркого солнечного дня, когда небосвод раскрашен в златистые тона, до серых туч, нависших над городом как тяжёлые, 
+const text = `Погода бывает разной:
+от яркого солнечного дня, когда небосвод раскрашен в златистые тона, до серых туч, нависших над городом как тяжёлые, 
 обремененные обещанием дождя покровы. Каждый сезон приносит свои особенности, словно мастер, с любовью и тщанием работающий над искусным полотном. Летние дни окутывают теплом, дарят 
 солнечные ласки и зовут на прогулки в парки, где деревья шепчут тайны ветра.
 Осень же проявляет всю свою палитру, наполняя воздух душистым ароматом упавших
@@ -14,18 +15,8 @@ const textElement = document.querySelector("#textExample");
 let letterId = 1;
 
 let liness = getLine(text);
-update();
 
-// прослушка клавиш
-
-inputElement.addEventListener("keydown", function (e) {
-  let currentLetter = getCurrentLetter();
-
-  if (currentLetter.label === e.key) {
-    letterId++;
-    update();
-  }
-});
+init();
 
 // функция обхода предложения (разделение предложения на числое кратное 70ти)
 function getLine(text) {
@@ -33,16 +24,26 @@ function getLine(text) {
   let line = [];
   let idCounter = 0;
 
-  for (const letter of text) {
+  for (const originalLetter of text) {
     idCounter += 1;
+    let letter = originalLetter;
+
+    if (letter === " ") {
+      letter = "°";
+    }
+
+    if (letter === "\n") {
+      letter = "¶\n";
+    }
 
     line.push({
       id: idCounter,
       label: letter,
+      origin: originalLetter,
       success: true,
     });
 
-    if (line.length >= 70 || letter === "\n") {
+    if (line.length >= 70 || letter === "¶\n") {
       lines.push(line);
       line = [];
     }
@@ -89,8 +90,6 @@ function update() {
   textElement.innerHTML = "";
   const currentLineNumber = getCurrentLineNumber();
 
-  console.log("currentLineNumber", currentLineNumber);
-
   for (let i = 0; i < liness.length; i++) {
     const html = lineToHtml(liness[i]);
     textElement.append(html);
@@ -110,4 +109,64 @@ function getCurrentLetter() {
       }
     }
   }
+}
+
+// функция при старте работы приложения
+function init() {
+  update();
+
+  inputElement.focus();
+
+  // прослушка клавиш и добавления класса hint
+  inputElement.addEventListener("keydown", function (e) {
+    const element = document.querySelector('[data-key="' + e.key + '"]');
+    let currentLetter = getCurrentLetter();
+    let currentLineNumber = getCurrentLineNumber();
+
+    // специфика работы с mac комбинация cmd + r
+    if (e.metaKey && e.key === "r") {
+      return;
+    }
+
+    if (element) {
+      element.classList.add("hint");
+    }
+
+    const isKey = currentLetter.origin === e.key;
+    const isEnter = e.key === "Enter" && currentLetter.origin === "\n";
+
+    if (isKey || isEnter) {
+      letterId++;
+      update();
+    } else {
+      e.preventDefault();
+    }
+
+    //работа с SHIFT (left or right)
+    if (e.key === "Shift") {
+      document
+        .querySelector('[data-key="' + e.code + '"]')
+        .classList.add("hint");
+    }
+
+    if (currentLineNumber !== getCurrentLineNumber()) {
+      inputElement.value = "";
+      e.preventDefault();
+    }
+  });
+  // прослушка клавиш и удаление класса hint
+  inputElement.addEventListener("keyup", function (e) {
+    const element = document.querySelector('[data-key="' + e.key + '"]');
+
+    if (element) {
+      element.classList.remove("hint");
+    }
+
+    //работа с SHIFT (left or right)
+    if (e.key === "Shift") {
+      document
+        .querySelector('[data-key="' + e.code + '"]')
+        .classList.remove("hint");
+    }
+  });
 }
