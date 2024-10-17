@@ -13,6 +13,11 @@ const text = `Погода бывает разной:
 const inputElement = document.querySelector("#input");
 const textElement = document.querySelector("#textExample");
 let letterId = 1;
+let startMoment = null;
+let started = false;
+
+let letterCounter = 0;
+let letterCounterError = 0;
 
 let liness = getLine(text);
 
@@ -79,6 +84,8 @@ function lineToHtml(line) {
 
     if (letter.id < letterId) {
       spanElement.classList.add("done");
+    } else if (!letter.success) {
+      spanElement.classList.add("hint");
     }
   }
 
@@ -119,12 +126,26 @@ function init() {
 
   // прослушка клавиш и добавления класса hint
   inputElement.addEventListener("keydown", function (e) {
-    const element = document.querySelector('[data-key="' + e.key + '"]');
+    const element = document.querySelector(
+      '[data-key="' + e.key.toLowerCase() + '"]'
+    );
+
     let currentLetter = getCurrentLetter();
     let currentLineNumber = getCurrentLineNumber();
+    const isKey = e.key === currentLetter.origin;
+    const isEnter = e.key === "Enter" && currentLetter.origin === "\n";
 
-    // специфика работы с mac комбинация cmd + r
+    if (e.key !== "Shift") {
+      letterCounter++;
+    }
+
+    if (!started) {
+      started = true;
+      startMoment = Date.now();
+    }
+
     if (e.metaKey && e.key === "r") {
+      // специфика работы с mac комбинация cmd + r
       return;
     }
 
@@ -132,41 +153,74 @@ function init() {
       element.classList.add("hint");
     }
 
-    const isKey = currentLetter.origin === e.key;
-    const isEnter = e.key === "Enter" && currentLetter.origin === "\n";
+    //работа с SHIFT (left or right)
+    if (e.key.toLowerCase() === "shift") {
+      document
+        .querySelector('[data-key="' + e.code + '"]')
+        .classList.add("hint");
+    }
 
     if (isKey || isEnter) {
       letterId++;
       update();
     } else {
       e.preventDefault();
-    }
 
-    //работа с SHIFT (left or right)
-    if (e.key === "Shift") {
-      document
-        .querySelector('[data-key="' + e.code + '"]')
-        .classList.add("hint");
+      // считаем ошибки
+      if (e.key !== "Shift") {
+        letterCounterError++;
+      }
+
+      // подсвечиваем все буквы, в которой ошиблись
+      for (let line of liness) {
+        for (let letter of line) {
+          if (letter.origin === currentLetter.origin) {
+            letter.success = false;
+          }
+        }
+      }
+
+      update();
     }
 
     if (currentLineNumber !== getCurrentLineNumber()) {
       inputElement.value = "";
       e.preventDefault();
+
+      started = false;
+      let time = Date.now() - startMoment;
+
+      document.querySelector("#wordsSpeed").textContent = Math.round(
+        (60000 * letterCounter) / time
+      );
+
+      document.querySelector("#errorProcent").textContent =
+        Math.round((letterCounterError / letterCounter) * 100) + "%";
+
+      letterCounter = 0;
+      letterCounterError = 0;
     }
   });
+
   // прослушка клавиш и удаление класса hint
   inputElement.addEventListener("keyup", function (e) {
-    const element = document.querySelector('[data-key="' + e.key + '"]');
+    const element = document.querySelector(
+      '[data-key="' + e.key.toLowerCase() + '"]'
+    );
 
     if (element) {
       element.classList.remove("hint");
     }
 
     //работа с SHIFT (left or right)
-    if (e.key === "Shift") {
+    if (e.key.toLowerCase() === "shift") {
       document
         .querySelector('[data-key="' + e.code + '"]')
         .classList.remove("hint");
     }
   });
 }
+
+document.addEventListener("click", () => {
+  inputElement.focus();
+});

@@ -30,14 +30,14 @@
               <i class="fas fa-tachometer-alt"></i>
             </div>
             <div class="indicator__name">Символов в минуту:</div>
-            <div class="indicator__value">266</div>
+            <div class="indicator__value" id="wordsSpeed">-</div>
           </div>
           <div class="indicator">
             <div class="indicator__icon indicator__icon--errors">
               <i class="fas fa-exclamation-circle"></i>
             </div>
             <div class="indicator__name">Ошибок:</div>
-            <div class="indicator__value">1.41%</div>
+            <div class="indicator__value" id="errorProcent">-%</div>
           </div>
         </div>
       </div>
@@ -63,24 +63,7 @@
 
       <!-- Text -->
       <!-- <div class="text error"> -->
-      <div class="text" id="textExample">
-        <div class="line line-1">
-          <span class="done"> На переднем плане, прямо перед</span>
-          <span class="hint">н</span>ами, расположен был дворик, где стоял
-        </div>
-        <div class="line line-2">
-          наполовину вычищенный автомобиль. Шофер Остин был на этот раз
-        </div>
-        <div class="line line-3">
-          уволен окончательно и бесповоротно. Он раскинулся на земле,
-        </div>
-        <div class="line line-4 hidden">
-          и большая черная ссадина на лбу свидетельствовала, по-видимому, о том,
-        </div>
-        <div class="line line-5 hidden">
-          что он при падении ударился головою о подножку или щит.
-        </div>
-      </div>
+      <div class="text" id="textExample"></div>
       <!-- // Text  -->
 
       <!-- Keyboard -->
@@ -99,10 +82,10 @@
           <div data-key="0">0</div>
           <div data-key="-">-</div>
           <div data-key="=">=</div>
-          <div class="backspace" data-key="Backspace">Backspace</div>
+          <div class="backspace" data-key="backspace">Backspace</div>
         </div>
         <div class="line">
-          <div class="tab" data-key="Tab">Tab</div>
+          <div class="tab" data-key="tab">Tab</div>
           <div data-key="й">Й</div>
           <div data-key="ц">Ц</div>
           <div data-key="у">У</div>
@@ -118,7 +101,7 @@
           <div data-key="ё">Ё</div>
         </div>
         <div class="line">
-          <div class="caps" data-key="CapsLock">Caps Lock</div>
+          <div class="caps" data-key="capslock">Caps Lock</div>
           <div data-key="ф">Ф</div>
           <div data-key="ы">Ы</div>
           <div data-key="в">В</div>
@@ -130,7 +113,7 @@
           <div data-key="д">Д</div>
           <div data-key="ж">Ж</div>
           <div data-key="э">Э</div>
-          <div class="enter" data-key="Enter">Enter</div>
+          <div class="enter" data-key="enter">Enter</div>
         </div>
         <div class="line">
           <div class="shift" data-key="ShiftLeft">Shift</div>
@@ -157,11 +140,13 @@
     <div class="devider"></div>
     <div class="container">
       <!-- Copyright -->
+
       <div class="copyright">
-        <p>
-          Проект сделал [Ваше имя] [Ваша фамилия] в рамках интенсива по JS в
-          <a href="https://vk.com/webcademy" target="_blank">WebCademy.ru</a>
-        </p>
+        <h1>Примечание:</h1>
+        <span>Cимвол "°" — введите <i>ПРОБЕЛ</i></span>
+        <br />
+        <span>Cимвол "¶" — введите <i>ENTER</i></span>
+        <p>Проект сделал Иван Попов в рамках интенсива по JS</p>
       </div>
       <!-- // Copyright -->
     </div>
